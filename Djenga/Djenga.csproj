@@ -66,10 +66,6 @@
       <DependentUpon>UserSelection.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="MVP.md" />
-    <None Include="README.md" />
-  </ItemGroup>
   <ItemGroup />
   <ItemGroup>
     <Page Include="View\UserDisplay.xaml">
