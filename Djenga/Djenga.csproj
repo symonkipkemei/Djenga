@@ -55,7 +55,7 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="Model\Calculator.cs" />
-    <Compile Include="Model\Element.cs" />
+    <Compile Include="Model\BuildElement.cs" />
     <Compile Include="Model\Logic.cs" />
     <Compile Include="Model\Material.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
