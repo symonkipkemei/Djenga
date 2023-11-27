@@ -5,8 +5,46 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Djenga.View"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="500" d:DesignWidth="300">
     <Grid>
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <!--Grid with control information-->
+
+        <Label Content="Djenga" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Left" FontWeight="Normal"/>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="btnMinimize" Content="-" Width="40" Height="40" BorderBrush="Transparent" Background="Transparent"
+                    Click="Click_btnMinimize" />
+            <Button x:Name="btnMaximize" Content="O" Width="40" Height="40" BorderBrush="Transparent" 
+                     Background="Transparent" Foreground="Gray" />
+            <Button x:Name="btnClose" Content="X" Width="40" Height="40" BorderBrush="Transparent" 
+                     Background="Transparent" Click="Click_btnClose"  />
+        </StackPanel>
+
+
+        <!--Wall parameters-->
+
+        <StackPanel Grid.Row="1" Margin="20" VerticalAlignment="Center" >
+            <Label Content="Masonry Length:"  VerticalContentAlignment="Center" FontWeight="Light" BorderBrush="Gray"  FontSize="16" Margin="0,0,0,10"/>
+            <TextBox Name="tbMasonryLength" Height="35" BorderBrush="Gray" BorderThickness="1" Margin="0,0,0,10" TextAlignment="Left" VerticalAlignment="Center" />
+            <Label Content="Masonry Width:"  VerticalContentAlignment="Center" FontWeight="Light" BorderBrush="Gray"  FontSize="16" Margin="0,0,0,10"/>
+            <TextBox Name="tbMasonrywidth" Height="35" BorderBrush="Gray" BorderThickness="1" Margin="0,0,0,10" TextAlignment="Left" VerticalAlignment="Center" />
+            <Label Content="Masonry Height:"  VerticalContentAlignment="Center" FontWeight="Light" BorderBrush="Gray"  FontSize="16" Margin="0,0,0,10"/>
+            <TextBox Name="tbMasonryHeight" Height="35" BorderBrush="Gray" BorderThickness="1" Margin="0,0,0,10" TextAlignment="Left" VerticalAlignment="Center" />
+            <Label Content="Mortar Thickness:"  VerticalContentAlignment="Center" FontWeight="Light" BorderBrush="Gray"  FontSize="16" Margin="0,0,0,10"/>
+            <TextBox Name="tbMortarThickness" Height="35" BorderBrush="Gray" BorderThickness="1" Margin="0,0,0,10" TextAlignment="Left" VerticalAlignment="Center" />
+
+            <Button Name="btnKabiroWall" Content=" Djenga" FontSize="16" FontWeight="ExtraLight" HorizontalContentAlignment="Center" 
+        VerticalContentAlignment="Center" Height=" 35"  Click="Click_btnDjenga" Grid.Row="1" Margin="0,0,0,10"  />
+
+
+        </StackPanel>
+
+
+
     </Grid>
 </Window>
