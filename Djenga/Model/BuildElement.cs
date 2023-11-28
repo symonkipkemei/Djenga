@@ -27,25 +27,32 @@ namespace Djenga.Model
     internal class Course
     {
 
-    
-        private Stone stoneFull;
-        private Stone stoneTooth;
-        private double lengthOfWall;
-
-        public string name;
-        public double courseHeight;
-        public ObservableCollection<Stone> stoneFullCollection;
-        public ObservableCollection<Stone> stoneToothCollection;
-        public ObservableCollection<Mortar> mortarVerticalCollection;
-        public ObservableCollection<Mortar> mortarHorizontalCollection;
-
-
-        public Mortar VerticalMortar { get; set; } 
+        // Material Properties/Objects
+        public Stone StoneFull { get; set; }
+        public Stone StoneTooth { get; set; }
+        public Mortar VerticalMortar { get; set; }
         public Mortar HorizontalMortar { get; set; }
 
+
+        //Descriptive Properties
+        public double WallLength { get; set; }
+        public double CourseHeight { get; set; }
+        public string Name { get; set; }
+      
+
+
+        // Collection properties
+        public ObservableCollection<Stone> StoneFullCollection { get; set; }
+        public ObservableCollection<Stone> StoneToothCollection { get; set; }
+        public ObservableCollection<Mortar> MortarVerticalCollection { get; set; }
+        public ObservableCollection<Mortar> MortarHorizontalCollection { get; set; }
+
+
+       
         
         public Course(double wallWidth, double wallLength, double wallHeight, double mortarThickness, double masonryHeight, double masonryLength, double masonryWidth)
         {
+            // Intanitiate Material objects
             VerticalMortar = new Mortar
             {
                 thickness = mortarThickness,
@@ -64,77 +71,81 @@ namespace Djenga.Model
                 ratioCement = 1
             };
 
-            stoneFull = new Stone
+            StoneFull = new Stone
             {
-                name = "full",
-                width = masonryWidth,
-                length = masonryLength,
-                height = masonryHeight
+                Name = "full",
+                Width = masonryWidth,
+                Length = masonryLength,
+                Height = masonryHeight
             };
 
-            stoneTooth = new Stone
+            StoneTooth = new Stone
             {
-                name = "Tooth",
-                width = masonryWidth,
-                length = masonryLength / 2,
-                height = masonryHeight
+                Name = "Tooth",
+                Width = masonryWidth,
+                Length = masonryLength / 2,
+                Height = masonryHeight
             };
 
-            lengthOfWall = wallLength;
+            // Intanitiate Dimensional properties
+            WallLength = wallLength;
+            CourseHeight = StoneFull.Height + HorizontalMortar.thickness;
+
+            // instantiate collection properties to enable it store values
+            MortarVerticalCollection = new ObservableCollection<Mortar>();
+            MortarHorizontalCollection = new ObservableCollection<Mortar>();
+            StoneFullCollection = new ObservableCollection<Stone>();
+            StoneToothCollection = new ObservableCollection<Stone>();
         }
 
       
         public void AddCourseElements(bool firstCourse)
         {
-            mortarVerticalCollection.Add(HorizontalMortar);
-            courseHeight = stoneFull.height + HorizontalMortar.thickness;
-
-            // Ensure the collections are empty first
-
-
+            MortarVerticalCollection.Add(HorizontalMortar);
+            
             // start with corner stone
             if (firstCourse)
             {
                 // add full stone first
-                stoneFullCollection.Add(stoneFull);
-                lengthOfWall -= stoneFull.length;
+                StoneFullCollection.Add(StoneFull);
+                WallLength -= StoneFull.Length;
             }
 
             else
             {
                 // add tooth stone
-                stoneToothCollection.Add(stoneTooth);
-                lengthOfWall -= stoneTooth.length;
+                StoneToothCollection.Add(StoneTooth);
+                WallLength -= StoneTooth.Length;
             }
 
             // cross checking the length of the wall
             double count = 0.0;
-            while (count < lengthOfWall)
+            while (count < WallLength)
             {
 
                 //insert block and mortar
-                stoneFullCollection.Add(stoneFull);
-                mortarVerticalCollection.Add(VerticalMortar);
+                StoneFullCollection.Add(StoneFull);
+                MortarVerticalCollection.Add(VerticalMortar);
 
 
                 // adjust new dimensions of built masonry
-                count += stoneFull.length;
+                count += StoneFull.Length;
                 count += VerticalMortar.thickness;
 
                 // est the remaining length
-                double rem = lengthOfWall - count;
+                double rem = WallLength - count;
 
-                if (rem < stoneFull.length && rem > stoneTooth.length)
+                if (rem < StoneFull.Length && rem > StoneTooth.Length)
                 {
                     //use a bigger block
-                    stoneFullCollection.Add(stoneFull);
+                    StoneFullCollection.Add(StoneFull);
                     count += rem;
                 }
 
-                else if (rem < stoneTooth.length)
+                else if (rem < StoneTooth.Length)
                 {
                     //use  a tooth block
-                    stoneToothCollection.Add(stoneFull);
+                    StoneToothCollection.Add(StoneFull);
                     count += rem;
                 }
                 // if this length is more than the size of the blocks, keep building.
@@ -146,11 +157,11 @@ namespace Djenga.Model
 
     internal class AbstractWall
     {
-        public ObservableCollection<Course> courseOneCollection;
-        public ObservableCollection<Course> courseTwoCollection;
-        public ObservableCollection<HoopIron> hoopIronCollection;
+        public ObservableCollection<Course> courseOneCollection { get; set; }
+        public ObservableCollection<Course> courseTwoCollection { get; set; }
+        public ObservableCollection<HoopIron> hoopIronCollection { get; set; }
 
-    
+
         public Course FirstCourse { get; set; }  
         public Course SecondCourse { get; set; }
         public HoopIron HoopIronPiece { get; set; }
@@ -158,9 +169,18 @@ namespace Djenga.Model
 
         internal AbstractWall(Course firstCourse, Course secondCourse, HoopIron hoopiron)
         {
+
+            // store objects into abstract wall properties
             FirstCourse = firstCourse;
             SecondCourse = secondCourse;
             HoopIronPiece = hoopiron;
+
+            // Intantiate collections
+
+            courseOneCollection = new ObservableCollection<Course>();
+            courseTwoCollection = new ObservableCollection<Course>();
+            hoopIronCollection = new ObservableCollection<HoopIron>();
+
 
         }
 
@@ -171,11 +191,11 @@ namespace Djenga.Model
             {
                 //Insert the first course
                 courseOneCollection.Add(FirstCourse);
-                count += FirstCourse.courseHeight;
+                count += FirstCourse.CourseHeight;
 
                 double rem = heightOfWall - count;
 
-                if (rem < FirstCourse.courseHeight)
+                if (rem < FirstCourse.CourseHeight)
                 {
                     courseTwoCollection.Add(SecondCourse);
                     hoopIronCollection.Add(HoopIronPiece);
@@ -187,9 +207,9 @@ namespace Djenga.Model
                     courseTwoCollection.Add(SecondCourse);
                     hoopIronCollection.Add(HoopIronPiece);
 
-                    count += FirstCourse.courseHeight;
+                    count += FirstCourse.CourseHeight;
 
-                    if (rem < SecondCourse.courseHeight)
+                    if (rem < SecondCourse.CourseHeight)
                     {
                         courseOneCollection.Add(FirstCourse);
                         count += rem;
