@@ -9,23 +9,43 @@ namespace Djenga.Model
 
     internal class Stone
     {
-        //Properties
-        public string name;
-        public double width;
-        public double height;
-        public double length;
-        public double density;
+        // Descriptive Properties
+        public string Name { get; set; }
+        public string Unit { get; set; }
+        public int Quantity {  get; set; }
+        public double Rate {  get; set; }
 
 
-        // volume
+        // Dimensional properties
+        public double Width { get; set; }
+        public double Height { get; set; }
+        public double Length { get; set; }
+        public double Density { get; set; }
+
+
+
+        internal Stone()
+        {
+            Unit = "Pieces";
+            Name = "Machine Cut Stone";
+            Rate = 50;
+        }
+
+
+        // Methods
         public double Volume()
         {
-            return width * length * height;
+            return Width * Length * Height;
         }
 
         public double Weight()
         {
-            return (length * width * height) * density;
+            return (Length * Width * Height) * Density;
+        }
+
+        public double Amount()
+        {
+            return Quantity * Rate;
         }
 
     }
@@ -43,7 +63,7 @@ namespace Djenga.Model
     internal class Cement
     {
         //Properties
-        public string name;
+        public string name ;
         public double density;
         public double weight; //in kg
 
@@ -57,16 +77,36 @@ namespace Djenga.Model
 
     internal class HoopIron
     {
-        //Properties
-        public string name;
-        public double density;
-        public double guage;
-        public double lengthOfHoopIron;
+        // Descriptive Properties
+
+        public string Name { get; set; }
+        public string Unit { get; set; }
+        public int Quantity {  get; set; }
+        public double Rate { get; set; }
 
 
+        // Dimensional Properties
+        public double Density { get; set; }
+        public double Guage { get; set; }
+        public double LengthOfHoopIron { get; set; }
+
+
+        //Construtor
         internal HoopIron(double length)
         {
-            lengthOfHoopIron = length;
+            LengthOfHoopIron = length;
+            Name = "Hoop Iron (25 Guage)";
+        }
+
+        //Methods
+        public double Amount()
+        {
+            return Quantity * Rate;
+        }
+
+        public double GetNoOfRolls(double totalHoopIronLength)
+        {
+            return totalHoopIronLength / 65.6168;
         }
     }
 
