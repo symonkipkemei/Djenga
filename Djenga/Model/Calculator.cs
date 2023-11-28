@@ -26,17 +26,17 @@ namespace Djenga.Model
         public double AddHoopIron()
         {
             double noOfHoopIron = _abstractWall.hoopIronCollection.Count();
-            double totalLengthHoopIron = noOfHoopIron * hoopiron.lengthOfHoopIron;
+            double totalLengthHoopIron = noOfHoopIron * hoopiron.LengthOfHoopIron;
 
             return totalLengthHoopIron;
         }
      
         public double AddStones()
         {
-            double firstCourseStonesFull = firstCourse.stoneFullCollection.Count();
-            double secondCourseStonesFull = secondCourse.stoneFullCollection.Count();
-            double firstCourseStonesTooth = firstCourse.stoneToothCollection.Count();
-            double secondCourseStonesTooth = secondCourse.stoneFullCollection.Count();
+            double firstCourseStonesFull = firstCourse.StoneFullCollection.Count();
+            double secondCourseStonesFull = secondCourse.StoneFullCollection.Count();
+            double firstCourseStonesTooth = firstCourse.StoneToothCollection.Count();
+            double secondCourseStonesTooth = secondCourse.StoneFullCollection.Count();
 
             double totalStoneFull = firstCourseStonesFull + secondCourseStonesFull;
             double totalStoneTooth = firstCourseStonesTooth + secondCourseStonesTooth;
@@ -48,11 +48,11 @@ namespace Djenga.Model
 
         public double AddMortar()
         {
-            double firstCourseHorizontalMortar = firstCourse.mortarHorizontalCollection.Count();
-            double secondCourseHorizontalMortar = secondCourse.mortarHorizontalCollection.Count();
+            double firstCourseHorizontalMortar = firstCourse.MortarHorizontalCollection.Count();
+            double secondCourseHorizontalMortar = secondCourse.MortarHorizontalCollection.Count();
 
-            double firstCourseVerticalMortar = firstCourse.mortarVerticalCollection.Count();
-            double secondCourseVerticalMortar = secondCourse.mortarVerticalCollection.Count();
+            double firstCourseVerticalMortar = firstCourse.MortarVerticalCollection.Count();
+            double secondCourseVerticalMortar = secondCourse.MortarVerticalCollection.Count();
 
             double verticalMortarVolume = firstCourse.VerticalMortar.Volume();
             double horizontalMortarVolume = secondCourse.HorizontalMortar.Volume();
