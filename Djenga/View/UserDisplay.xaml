@@ -5,8 +5,48 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Djenga.View"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             Height="300" Width="400"
+             WindowStyle="None" Title="Djenga"
+             MouseLeftButtonDown="Click_leftButtonDown">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <!--Grid with control information-->
+
+        <Label Content="Material Schedule" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Left" FontWeight="Normal" Width="72" Height="28"/>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="btnMinimize" Content="-" Width="40" Height="40" BorderBrush="Transparent" Background="Transparent"
+            Click="Click_btnMinimize" />
+            <Button x:Name="btnMaximize" Content="O" Width="40" Height="40" BorderBrush="Transparent" 
+            Background="Transparent" Foreground="Gray" />
+            <Button x:Name="btnClose" Content="X" Width="40" Height="40" BorderBrush="Transparent" 
+            Background="Transparent" Click="Click_btnClose"  />
+        </StackPanel>
+
+        <!--Tabular information-->
+
+        <StackPanel Grid.Row="1" Margin="20" VerticalAlignment="Top" >
+
+            <Label Content="Wall Material Schedule:"  VerticalContentAlignment="Center"  
+           FontWeight="Light" BorderBrush="Gray"  FontSize="16" Margin="0,0,0,10"/>
+
+            <DataGrid Grid.Row="1" ItemsSource="{Binding ViewItems}" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" Height="100">
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="25*" />
+                    <DataGridTextColumn Header="Unit" Binding="{Binding Unit}" Width="25*"/>
+                    <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="25*"/>
+                    <DataGridTextColumn Header="Rate" Binding="{Binding Rate}" Width="25*" />
+                    <DataGridTextColumn Header="Amount" Binding="{Binding Amount}" Width="25*"/>
+                    
+                </DataGrid.Columns>
+            </DataGrid>
             
+        </StackPanel>
+
     </Grid>
 </Window>
