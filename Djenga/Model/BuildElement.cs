@@ -5,33 +5,88 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using Autodesk.Revit.DB.Electrical;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Djenga.Model
 {
 
     internal class Mortar
     {
-        public double thickness;
-        public double length;
-        public double width;
-        public int ratioSand;
-        public int ratioCement;
+
+        // Object properties
+
+        public Cement Cement { get; set; }
+        public Sand Sand { get; set; }
+
+        public int RatioSand {  get; set; }
+        public int RatioCement { get; set; }
+        public double Volume {  get; set; }
+
+        internal Mortar(double volume) 
+        {
+            Volume = volume;
+            RatioSand = 3;
+            RatioCement = 1;
+            double cementVolume = (RatioSand / (RatioSand + RatioCement)) * Volume;
+            double sandVolume = (RatioSand / (RatioSand + RatioCement)) * Volume;
+            Cement = new Cement(cementVolume);
+            Sand = new Sand(sandVolume);
+        }
+        
+    }
+
+
+    internal class Joint
+    {
+        //Dimensional Properties
+        public double Thickness { get; set; }
+        public double Length { get; set; }
+        public double Width { get; set; }
+        public double Volume { get; set; }
+
+
+        // make up properties
+        public Mortar Mortar { get; set; }
+
+
+        internal Joint()
+        {
+            Volume = Thickness * Length * Width;
+            Mortar = new Mortar(Volume);
+        }
+     
+    }
+
+
+
+    internal class Block: Stone
+    {
+        // Dimensional properties
+        public double Width { get; set; }
+        public double Height { get; set; }
+        public double Length { get; set; }
+
 
         public double Volume()
         {
-            return thickness * width * length;
+            return Width * Length * Height;
         }
-    }
 
+        public double Weight()
+        {
+            return (Length * Width * Height) * Density;
+        }
+
+    }
 
     internal class Course
     {
 
         // Material Properties/Objects
-        public Stone StoneFull { get; set; }
-        public Stone StoneTooth { get; set; }
-        public Mortar VerticalMortar { get; set; }
-        public Mortar HorizontalMortar { get; set; }
+        public Block FullBlock { get; set; }
+        public Block ToothBlock { get; set; }
+        public Joint VeriticalJoint { get; set; }
+        public Joint HorizontalJoint { get; set; }
 
 
         //Descriptive Properties
@@ -42,46 +97,41 @@ namespace Djenga.Model
 
 
         // Collection properties
-        public ObservableCollection<Stone> StoneFullCollection { get; set; }
-        public ObservableCollection<Stone> StoneToothCollection { get; set; }
-        public ObservableCollection<Mortar> MortarVerticalCollection { get; set; }
-        public ObservableCollection<Mortar> MortarHorizontalCollection { get; set; }
+        public ObservableCollection<Block> FullBlockCollection { get; set; }
+        public ObservableCollection<Block> ToothBlockCollection { get; set; }
+        public ObservableCollection<Joint> VerticalJointCollection { get; set; }
+        public ObservableCollection<Joint> HorizontalJointCollection { get; set; }
 
 
        
         
-        public Course(double wallWidth, double wallLength, double wallHeight, double mortarThickness, double masonryHeight, double masonryLength, double masonryWidth)
+        public Course(double wallWidth, double wallLength, double mortarThickness, double masonryHeight, double masonryLength, double masonryWidth)
         {
             // Intanitiate Material objects
-            VerticalMortar = new Mortar
+            VeriticalJoint = new Joint
             {
-                thickness = mortarThickness,
-                width = wallWidth,
-                length = wallHeight,
-                ratioSand = 3,
-                ratioCement = 1
+                Thickness = mortarThickness,
+                Width = wallWidth,
+                Length = masonryHeight,
+           
             };
 
-            HorizontalMortar = new Mortar
+            HorizontalJoint = new Joint
             {
-                thickness = mortarThickness,
-                width = wallWidth,
-                length = wallLength,
-                ratioSand = 3,
-                ratioCement = 1
+                Thickness = mortarThickness,
+                Width = wallWidth,
+                Length = wallLength,
             };
 
-            StoneFull = new Stone
+            FullBlock = new Block
             {
-                Name = "full",
                 Width = masonryWidth,
                 Length = masonryLength,
                 Height = masonryHeight
             };
 
-            StoneTooth = new Stone
+            ToothBlock = new Block
             {
-                Name = "Tooth",
                 Width = masonryWidth,
                 Length = masonryLength / 2,
                 Height = masonryHeight
@@ -89,33 +139,33 @@ namespace Djenga.Model
 
             // Intanitiate Dimensional properties
             WallLength = wallLength;
-            CourseHeight = StoneFull.Height + HorizontalMortar.thickness;
+            CourseHeight = FullBlock.Height + HorizontalJoint.Thickness;
 
             // instantiate collection properties to enable it store values
-            MortarVerticalCollection = new ObservableCollection<Mortar>();
-            MortarHorizontalCollection = new ObservableCollection<Mortar>();
-            StoneFullCollection = new ObservableCollection<Stone>();
-            StoneToothCollection = new ObservableCollection<Stone>();
+            VerticalJointCollection = new ObservableCollection<Joint>();
+            HorizontalJointCollection = new ObservableCollection<Joint>();
+            FullBlockCollection = new ObservableCollection<Block>();
+            ToothBlockCollection = new ObservableCollection<Block>();
         }
 
       
         public void AddCourseElements(bool firstCourse)
         {
-            MortarVerticalCollection.Add(HorizontalMortar);
+            HorizontalJointCollection.Add(HorizontalJoint);
             
             // start with corner stone
             if (firstCourse)
             {
                 // add full stone first
-                StoneFullCollection.Add(StoneFull);
-                WallLength -= StoneFull.Length;
+                FullBlockCollection.Add(FullBlock);
+                WallLength -= FullBlock.Length;
             }
 
             else
             {
                 // add tooth stone
-                StoneToothCollection.Add(StoneTooth);
-                WallLength -= StoneTooth.Length;
+                ToothBlockCollection.Add(ToothBlock);
+                WallLength -= ToothBlock.Length;
             }
 
             // cross checking the length of the wall
@@ -124,38 +174,39 @@ namespace Djenga.Model
             {
 
                 //insert block and mortar
-                StoneFullCollection.Add(StoneFull);
-                MortarVerticalCollection.Add(VerticalMortar);
+                FullBlockCollection.Add(FullBlock);
+                VerticalJointCollection.Add(VeriticalJoint);
 
 
                 // adjust new dimensions of built masonry
-                count += StoneFull.Length;
-                count += VerticalMortar.thickness;
+                count += FullBlock.Length;
+                count += VeriticalJoint.Thickness;
 
                 // est the remaining length
                 double rem = WallLength - count;
 
-                if (rem < StoneFull.Length && rem > StoneTooth.Length)
+                if (rem < FullBlock.Length && rem > ToothBlock.Length)
                 {
                     //use a bigger block
-                    StoneFullCollection.Add(StoneFull);
+                    FullBlockCollection.Add(FullBlock);
                     count += rem;
                 }
 
-                else if (rem < StoneTooth.Length)
+                else if (rem < ToothBlock.Length)
                 {
                     //use  a tooth block
-                    StoneToothCollection.Add(StoneFull);
+                    ToothBlockCollection.Add(FullBlock);
                     count += rem;
                 }
                 // if this length is more than the size of the blocks, keep building.
             }
         }
 
+        
     }
 
 
-    internal class AbstractWall
+    internal class Ukuta
     {
         public ObservableCollection<Course> courseOneCollection { get; set; }
         public ObservableCollection<Course> courseTwoCollection { get; set; }
@@ -167,7 +218,7 @@ namespace Djenga.Model
         public HoopIron HoopIronPiece { get; set; }
        
 
-        internal AbstractWall(Course firstCourse, Course secondCourse, HoopIron hoopiron)
+        internal Ukuta(Course firstCourse, Course secondCourse, HoopIron hoopiron)
         {
 
             // store objects into abstract wall properties
@@ -218,6 +269,87 @@ namespace Djenga.Model
                 }
             }
                 // if this length is more than the size of the blocks, keep building.
-            }
+        }
+        
+
+
+        public double TotalBlocks()
+        {
+        // Total full blocks
+        double firstCourseFullBlocks = FirstCourse.FullBlockCollection.Count();
+        double secondCourseFullBlocks = SecondCourse.FullBlockCollection.Count();
+        double totalFullBlocks = firstCourseFullBlocks + secondCourseFullBlocks;
+
+        //Total tooth blocks
+        double firstCourseToothBlocks = FirstCourse.ToothBlockCollection.Count();
+        double secondCourseToothBlocks = SecondCourse.FullBlockCollection.Count();
+        double totalToothBlocks = firstCourseToothBlocks + secondCourseToothBlocks;
+
+        //Total Blocks
+        double totalBlocks = totalFullBlocks + totalToothBlocks;
+
+        return totalBlocks;
+        }
+
+        public double TotalHorizontalJoints()
+        {
+            double firstCourseHorizontalJoints = FirstCourse.HorizontalJointCollection.Count();
+            double secondCourseHorizontaJoints = SecondCourse.HorizontalJointCollection.Count();
+            double totalHorizontalJoints = firstCourseHorizontalJoints + secondCourseHorizontaJoints;
+
+
+            return totalHorizontalJoints;
+
+        }
+
+        public double TotalVerticalJoints()
+        {
+            double firstCourseVerticalJoints = FirstCourse.VerticalJointCollection.Count();
+            double secondCourseVerticalJoints = SecondCourse.VerticalJointCollection.Count();
+
+            // total number of joints
+
+            double totalVerticalJoints = firstCourseVerticalJoints + secondCourseVerticalJoints;
+
+            return totalVerticalJoints;
+
+        }
+
+
+        // vj = vertical joint
+        // hj = horizontal joint
+
+
+        public double TotalCementWeight()
+        {
+            // Cement weight
+
+            double vjCementWeight = FirstCourse.VeriticalJoint.Mortar.Cement.Weight();
+            double hjCementWeight = SecondCourse.HorizontalJoint.Mortar.Cement.Weight();
+
+            double totalvjCementWeight = TotalVerticalJoints() * vjCementWeight;
+            double totalhjCementWeight = TotalHorizontalJoints() * hjCementWeight;
+
+            double totalCementWeight = totalvjCementWeight + totalhjCementWeight;
+
+            return totalCementWeight;
+        }
+
+
+        public double TotalSandWeight()
+        {
+            // sand weight
+            double vjSandWeight = FirstCourse.VeriticalJoint.Mortar.Sand.Weight();
+            double hjSandWeight = SecondCourse.HorizontalJoint.Mortar.Sand.Weight();
+
+            double totalvjSandWeight = TotalVerticalJoints() * vjSandWeight;
+            double totalhjSandWeight = TotalHorizontalJoints() * hjSandWeight;
+
+            double totalSandWeight = totalvjSandWeight + totalhjSandWeight;
+
+           
+            return totalSandWeight;
         }
     }
+            
+}
