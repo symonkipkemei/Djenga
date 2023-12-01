@@ -73,53 +73,61 @@ namespace Djenga.View
             Logic logic = new Logic();
             IList<Element> walls = logic.SelectMultipleWalls(uidoc, doc);
 
+
+            // For every wall
             foreach (Element wall in walls)
             {
+                // abstract wall data
                 double length = wall.get_Parameter(BuiltInParameter.CURVE_ELEM_LENGTH).AsDouble();
- 
                 double height = wall.get_Parameter(BuiltInParameter.WALL_USER_HEIGHT_PARAM).AsDouble();
                 double width = 0.656168; // to be fixed , set to 200mm thick
 
-                // create the following objects
-
-                Course firstCourse = new Course(width, length, height, mortarThickness, masonryHeight, masonryLength, masonryWidth);
-                Course secondCourse = new Course(width, length, height, mortarThickness, masonryHeight, masonryLength, masonryWidth);
+                // Intantiate ingredients for creating wall courses
+                Course firstCourse = new Course(width, length, mortarThickness, masonryHeight, masonryLength, masonryWidth);
+                Course secondCourse = new Course(width, length, mortarThickness, masonryHeight, masonryLength, masonryWidth);
                 HoopIron hoopiron = new HoopIron(length);
 
-
+                // Create  courses by adding individual elements i.e blocks and mortar
                 firstCourse.AddCourseElements(true);
                 secondCourse.AddCourseElements(false);
 
-                AbstractWall abstractWall = new AbstractWall(firstCourse, secondCourse, hoopiron);
-
-                abstractWall.AddCourses(height);
-
-                Calculator abstractCalculator = new Calculator(abstractWall);
-
-                double stonesPieces = abstractCalculator.AddStones();
-               
-                double hoopIronLength = abstractCalculator.AddHoopIron();
+                // Intantiate ingredients for creating an abstract wall
+                Ukuta ukuta = new Ukuta(firstCourse, secondCourse, hoopiron);
+                ukuta.AddCourses(height);
 
                 // stones
                 Items.Add(new Display
                 {
-                    Description = abstractWall.FirstCourse.StoneFull.Name,
-                    Unit = abstractWall.FirstCourse.StoneFull.Unit,
-                    Quantity = stonesPieces,
-                    Rate = abstractWall.FirstCourse.StoneFull.Rate,
-                    Amount = abstractWall.FirstCourse.StoneFull.Amount()
+                    Description = ukuta.FirstCourse.FullBlock.Name,
+                    Unit = ukuta.FirstCourse.FullBlock.Unit,
+                    Quantity = ukuta.TotalBlocks(),
+                    Rate = ukuta.FirstCourse.FullBlock.Rate,
+                    Amount = ukuta.FirstCourse.FullBlock.Amount()
                 });
 
-                // hoop iron
+                // cement
                 Items.Add(new Display
                 {
-                    Description = abstractWall.HoopIronPiece.Name,
-                    Unit = abstractWall.HoopIronPiece.Unit,
-                    Quantity = abstractWall.HoopIronPiece.GetNoOfRolls(hoopIronLength),
-                    Rate = abstractWall.HoopIronPiece.Rate,
-                    Amount = abstractWall.HoopIronPiece.Amount()
+                    Description = ukuta.FirstCourse.HorizontalJoint.Mortar.Cement.Name,
+                    Unit = ukuta.FirstCourse.HorizontalJoint.Mortar.Cement.Unit,
+                    Quantity = ukuta.TotalCementWeight(),
+                    Rate = ukuta.FirstCourse.HorizontalJoint.Mortar.Cement.Rate,
+                    Amount = ukuta.FirstCourse.HorizontalJoint.Mortar.Cement.Amount(),
 
                 });
+
+
+                // sand
+                Items.Add(new Display
+                {
+                    Description = ukuta.FirstCourse.HorizontalJoint.Mortar.Sand.Name,
+                    Unit = ukuta.FirstCourse.HorizontalJoint.Mortar.Sand.Unit,
+                    Quantity = ukuta.TotalSandWeight(),
+                    Rate = ukuta.FirstCourse.HorizontalJoint.Mortar.Sand.Rate,
+                    Amount = ukuta.FirstCourse.HorizontalJoint.Mortar.Sand.Amount(),
+
+                });
+
             }
             UserDisplay displayForm = new UserDisplay(Items);
             displayForm.ShowDialog();
