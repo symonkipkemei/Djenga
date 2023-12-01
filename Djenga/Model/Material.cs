@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Media3D;
 
 namespace Djenga.Model
 {
@@ -15,13 +16,7 @@ namespace Djenga.Model
         public int Quantity {  get; set; }
         public double Rate {  get; set; }
 
-
-        // Dimensional properties
-        public double Width { get; set; }
-        public double Height { get; set; }
-        public double Length { get; set; }
         public double Density { get; set; }
-
 
 
         internal Stone()
@@ -31,17 +26,6 @@ namespace Djenga.Model
             Rate = 50;
         }
 
-
-        // Methods
-        public double Volume()
-        {
-            return Width * Length * Height;
-        }
-
-        public double Weight()
-        {
-            return (Length * Width * Height) * Density;
-        }
 
         public double Amount()
         {
@@ -53,24 +37,72 @@ namespace Djenga.Model
 
     internal class Sand
     {
-        //Properties
-        public string name;
-        public double density;
+        // Descriptive Properties
+        public string Name { get; set; }
+        public string Unit { get; set; }
+        public int Quantity { get; set; }
+        public double Rate { get; set; }
+        public double Density { get; set; }
+        public double Volume { get; set; }
+
+
+        internal Sand(double volume)
+        {
+            Name = "River Sand";
+            Unit = "Volume";
+            Rate = 300;
+            Density = 1602; //kg/m3
+            Volume = volume;
+        }
+        public double Weight()
+        {
+            return Volume * Density;
+        }
+
+        public double Amount()
+        {
+            return Quantity * Rate;
+        }
 
     }
 
 
     internal class Cement
     {
-        //Properties
-        public string name ;
-        public double density;
-        public double weight; //in kg
+        // Descriptive Properties
+        public string Name { get; set; }
+        public string Unit { get; set; }
+        public int Quantity { get; set; }
+        public double Rate { get; set; }
+        public double Density { get; set; }
+        public double Volume { get; set; }
 
-        // volume
-        public double Volume()
+
+        internal Cement(double volume)
         {
-            return weight / density;
+            Name = "Bamburi Cement";
+            Unit = "Bags";
+            Rate = 605;
+            Density = 1440; //kg/m3
+            Volume = volume;
+        }
+
+        
+        public double Weight()
+        {
+            return Volume * Density;
+        }
+
+        public double NoOfBags(int bagSizeinKg)
+        {
+            double aproxBags = (Volume * Density) / bagSizeinKg;
+            int EstimateBags =  (int)Math.Round(aproxBags);
+            return EstimateBags;
+        }
+
+        public double Amount()
+        {
+            return Quantity * Rate;
         }
     }
 
