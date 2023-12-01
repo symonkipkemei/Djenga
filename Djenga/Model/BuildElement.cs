@@ -26,6 +26,17 @@ namespace Djenga.Model
         }
     }
 
+
+    internal class HoopIronStrip: HoopIron
+    {
+        public double StripLength { get; set; }
+
+        internal HoopIronStrip(double WallLength)
+        {
+            StripLength = WallLength;
+        }
+
+    }
     internal class Mortar
     {
 
@@ -234,17 +245,17 @@ namespace Djenga.Model
 
         public Course FirstCourse { get; set; }  
         public Course SecondCourse { get; set; }
-        public HoopIron HoopIronPiece { get; set; }
+        public HoopIronStrip HoopIronStrip { get; set; }
         public DpcStrip DpcStrip {  get; set; }
        
 
-        internal Ukuta(Course firstCourse, Course secondCourse, HoopIron hoopiron,DpcStrip dpcStrip)
+        internal Ukuta(Course firstCourse, Course secondCourse, HoopIronStrip hoopIronStrip,DpcStrip dpcStrip)
         {
 
             // store objects into abstract wall properties
             FirstCourse = firstCourse;
             SecondCourse = secondCourse;
-            HoopIronPiece = hoopiron;
+            HoopIronStrip = hoopIronStrip;
             DpcStrip = dpcStrip;
 
             // Instantiate collections
@@ -274,14 +285,14 @@ namespace Djenga.Model
                 if (rem < FirstCourse.CourseHeight)
                 {
                     courseTwoCollection.Add(SecondCourse);
-                    hoopIronCollection.Add(HoopIronPiece);
+                    hoopIronCollection.Add(HoopIronStrip);
                     count += rem;
                 }
                    
                 else 
                 {
                     courseTwoCollection.Add(SecondCourse);
-                    hoopIronCollection.Add(HoopIronPiece);
+                    hoopIronCollection.Add(HoopIronStrip);
 
                     count += FirstCourse.CourseHeight;
 
@@ -388,8 +399,13 @@ namespace Djenga.Model
 
         }
 
-        
-
+        public double TotalHoopIronRolls()
+        {
+            double totalHoopIronStripLength = HoopIronStrip.StripLength * hoopIronCollection.Count();
+            int NoOfRolls = Convert.ToInt32(totalHoopIronStripLength / HoopIronStrip.Length);
+            
+            return NoOfRolls;
+        }
 
 
     }
