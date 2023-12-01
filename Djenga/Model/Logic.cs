@@ -101,11 +101,11 @@ namespace Djenga.Model
 
                 Items.Add(new Display
                 {
-                    Description = ukuta.FirstCourse.HorizontalJoint.Mortar.Sand.Name,
-                    Unit = ukuta.FirstCourse.HorizontalJoint.Mortar.Sand.Unit,
-                    Quantity = ukuta.TotalSandWeight(),
-                    Rate = ukuta.FirstCourse.HorizontalJoint.Mortar.Sand.Rate,
-                    Amount = ukuta.FirstCourse.HorizontalJoint.Mortar.Sand.Amount(),
+                    Description = ukuta.HoopIronStrip.Name,
+                    Unit = ukuta.HoopIronStrip.Unit,
+                    Quantity = ukuta.TotalHoopIronRolls(),
+                    Rate = ukuta.HoopIronStrip.Rate,
+                    Amount = ukuta.HoopIronStrip.Amount(),
 
                 });
 

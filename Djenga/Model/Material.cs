@@ -122,25 +122,26 @@ namespace Djenga.Model
         // Dimensional Properties
         public double Density { get; set; }
         public double Guage { get; set; }
-        public double LengthOfHoopIron { get; set; }
+        public double Length { get; set; }
 
+        public double Weight { get; set; }
 
         //Construtor
-        internal HoopIron(double length)
+        internal HoopIron()
         {
-            LengthOfHoopIron = length;
-            Name = "Hoop Iron (25 Guage)";
+            Length = 20000; // 20m (20,000mm)long
+            Name = "Hoop Iron (16 Guage)";
+            Unit = "Rolls";
+            Rate = 3500;
+            Weight = 20;//20kg
+            Guage = 16;
+
         }
 
         //Methods
         public double Amount()
         {
             return Quantity * Rate;
-        }
-
-        public double GetNoOfRolls(double totalHoopIronLength)
-        {
-            return totalHoopIronLength / 65.6168;
         }
     }
 
