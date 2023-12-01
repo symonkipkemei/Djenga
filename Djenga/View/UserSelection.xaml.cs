@@ -86,13 +86,14 @@ namespace Djenga.View
                 Course firstCourse = new Course(width, length, mortarThickness, masonryHeight, masonryLength, masonryWidth);
                 Course secondCourse = new Course(width, length, mortarThickness, masonryHeight, masonryLength, masonryWidth);
                 HoopIron hoopiron = new HoopIron(length);
+                DpcStrip dpcStrip = new DpcStrip(width, length);
 
                 // Create  courses by adding individual elements i.e blocks and mortar
                 firstCourse.AddCourseElements(true);
                 secondCourse.AddCourseElements(false);
 
                 // Intantiate ingredients for creating an abstract wall
-                Ukuta ukuta = new Ukuta(firstCourse, secondCourse, hoopiron);
+                Ukuta ukuta = new Ukuta(firstCourse, secondCourse, hoopiron, dpcStrip);
                 ukuta.AddCourses(height);
 
                 // stones
@@ -127,6 +128,33 @@ namespace Djenga.View
                     Amount = ukuta.FirstCourse.HorizontalJoint.Mortar.Sand.Amount(),
 
                 });
+
+
+                // Hoop Iron
+
+                Items.Add(new Display
+                {
+                    Description = ukuta.FirstCourse.HorizontalJoint.Mortar.Sand.Name,
+                    Unit = ukuta.FirstCourse.HorizontalJoint.Mortar.Sand.Unit,
+                    Quantity = ukuta.TotalSandWeight(),
+                    Rate = ukuta.FirstCourse.HorizontalJoint.Mortar.Sand.Rate,
+                    Amount = ukuta.FirstCourse.HorizontalJoint.Mortar.Sand.Amount(),
+
+                });
+
+
+
+                // DPC
+                Items.Add(new Display
+                {
+                    Description = ukuta.DpcStrip.Name,
+                    Unit = ukuta.DpcStrip.Unit,
+                    Quantity = ukuta.TotalDpcRolls(),
+                    Rate = ukuta.DpcStrip.Rate,
+                    Amount = ukuta.DpcStrip.Amount(),
+
+                });
+
 
             }
             UserDisplay displayForm = new UserDisplay(Items);

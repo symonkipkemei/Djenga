@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Autodesk.Revit.DB;
+using Autodesk.Revit.DB.ExtensibleStorage;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -143,14 +145,36 @@ namespace Djenga.Model
     }
 
 
-
-
     internal class DampProofCourse
     {
-        //Properties
-        public string name;
-        public double width;
-        public double length;
+        // Descriptive Properties
+
+        public string Name { get; set; }
+        public string Unit { get; set; }
+        public int Quantity { get; set; }
+        public double Rate { get; set; }
+
+
+        // Dimensional properties
+        public double Width { get; set; }
+        public double Length { get; set; }
+
+
+        internal DampProofCourse()
+        {
+            Name = "Damp Proof Course (DPC)";
+            Unit = "Rolls";
+            Rate = 2200;
+            Width = 1000;
+            Length = 7000;
+        }
+
+
+        public double Amount()
+        {
+            return Quantity * Rate;
+        }
+
     }
 
 }

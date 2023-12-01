@@ -6,9 +6,25 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using Autodesk.Revit.DB.Electrical;
 using System.Security.Cryptography.X509Certificates;
+using Autodesk.Revit.DB;
 
 namespace Djenga.Model
 {
+
+
+    internal class DpcStrip: DampProofCourse
+    {
+        // Dimensional Properties
+        public double SectionWidth { get; set; }
+        public double SectionLength { get; set; }
+
+        internal DpcStrip( double WallWidth,double WallLength)
+        {
+            double offset = 25;
+            SectionWidth = offset + WallWidth + offset;
+            SectionLength =  WallLength;
+        }
+    }
 
     internal class Mortar
     {
@@ -206,37 +222,46 @@ namespace Djenga.Model
     }
 
 
+
+
     internal class Ukuta
     {
         public ObservableCollection<Course> courseOneCollection { get; set; }
         public ObservableCollection<Course> courseTwoCollection { get; set; }
         public ObservableCollection<HoopIron> hoopIronCollection { get; set; }
+        public ObservableCollection<DpcStrip> DpcStripCollection { get; set; }
 
 
         public Course FirstCourse { get; set; }  
         public Course SecondCourse { get; set; }
         public HoopIron HoopIronPiece { get; set; }
+        public DpcStrip DpcStrip {  get; set; }
        
 
-        internal Ukuta(Course firstCourse, Course secondCourse, HoopIron hoopiron)
+        internal Ukuta(Course firstCourse, Course secondCourse, HoopIron hoopiron,DpcStrip dpcStrip)
         {
 
             // store objects into abstract wall properties
             FirstCourse = firstCourse;
             SecondCourse = secondCourse;
             HoopIronPiece = hoopiron;
+            DpcStrip = dpcStrip;
 
-            // Intantiate collections
+            // Instantiate collections
 
             courseOneCollection = new ObservableCollection<Course>();
             courseTwoCollection = new ObservableCollection<Course>();
             hoopIronCollection = new ObservableCollection<HoopIron>();
-
+            DpcStripCollection = new ObservableCollection<DpcStrip>();
 
         }
 
         public void AddCourses(double heightOfWall)
         {
+
+            // instert DPC
+
+            DpcStripCollection.Add(DpcStrip);
             double count = 0.0;
             while (count < heightOfWall)
             {
@@ -350,6 +375,23 @@ namespace Djenga.Model
            
             return totalSandWeight;
         }
+
+        public double TotalDpcRolls()
+        {
+            double totalDpcStripLength = DpcStrip.SectionLength * DpcStripCollection.Count();
+            double NoOfSectionsInOneRow = (int)(DpcStrip.Width / DpcStrip.SectionWidth);
+            double TotalLengthofdpcPerRow = NoOfSectionsInOneRow * DpcStrip.Length;
+
+            int NoOfRolls =Convert.ToInt32(totalDpcStripLength / TotalLengthofdpcPerRow);
+
+            return NoOfRolls;
+
+        }
+
+        
+
+
+
     }
             
 }
