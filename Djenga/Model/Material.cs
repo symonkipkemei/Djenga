@@ -53,7 +53,7 @@ namespace Djenga.Model
             Name = "River Sand";
             Unit = "Volume";
             Rate = 300;
-            Density = 1602; //kg/m3
+            Density = 0.001602; //g/mm3 ( 1602kg/m3)
             Volume = volume;
         }
         public double Weight()
@@ -85,7 +85,7 @@ namespace Djenga.Model
             Name = "Bamburi Cement";
             Unit = "Bags";
             Rate = 605;
-            Density = 1440; //kg/m3
+            Density = 0.00144; //g/mm3 ( 1440kg/m3)
             Volume = volume;
         }
 
@@ -95,9 +95,9 @@ namespace Djenga.Model
             return Volume * Density;
         }
 
-        public double NoOfBags(int bagSizeinKg)
+        public double NoOfBags(int bagSizeing)
         {
-            double aproxBags = (Volume * Density) / bagSizeinKg;
+            double aproxBags = (Volume * Density) / bagSizeing;
             int EstimateBags =  (int)Math.Round(aproxBags);
             return EstimateBags;
         }
@@ -133,7 +133,7 @@ namespace Djenga.Model
             Name = "Hoop Iron (16 Guage)";
             Unit = "Rolls";
             Rate = 3500;
-            Weight = 20;//20kg
+            Weight = 20000;//20kg (20000g)
             Guage = 16;
 
         }
@@ -166,8 +166,8 @@ namespace Djenga.Model
             Name = "Damp Proof Course (DPC)";
             Unit = "Rolls";
             Rate = 2200;
-            Width = 1000;
-            Length = 7000;
+            Width = 1000;// 1000mm (1m)
+            Length = 7000; // 7000mm (7m)
         }
 
 

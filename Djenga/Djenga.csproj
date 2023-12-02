@@ -58,6 +58,7 @@
     <Compile Include="Model\Display.cs" />
     <Compile Include="Model\Logic.cs" />
     <Compile Include="Model\Material.cs" />
+    <Compile Include="Model\UnitsConversion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="View\UserDisplay.xaml.cs">
       <DependentUpon>UserDisplay.xaml</DependentUpon>

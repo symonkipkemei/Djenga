@@ -8,6 +8,7 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.DB;
 using System.Windows.Controls;
 using System.Collections.ObjectModel;
+using Autodesk.Revit.DB.Structure;
 
 namespace Djenga.Model
 {
@@ -36,6 +37,7 @@ namespace Djenga.Model
             return walls;
         }
 
+        
 
         public void AbstractWallMaterialData(IList<Element> walls, double mortarThickness, double masonryHeight, double masonryLength, double masonryWidth)
         {
@@ -44,10 +46,20 @@ namespace Djenga.Model
             // For every wall
             foreach (Element wall in walls)
             {
-                // abstract wall data
+                // abstract wall data 
                 double length = wall.get_Parameter(BuiltInParameter.CURVE_ELEM_LENGTH).AsDouble();
                 double height = wall.get_Parameter(BuiltInParameter.WALL_USER_HEIGHT_PARAM).AsDouble();
-                double width = 0.656168; // to be fixed , set to 200mm thick
+                double width = 0.656168;
+
+
+                //converted to mm
+
+                length = UnitsConversion.FootToMm(length);
+                height = UnitsConversion.FootToMm(height);
+                width = UnitsConversion.FootToMm(width);
+
+                
+
 
                 // Intantiate ingredients for creating wall courses
                 Course firstCourse = new Course(width, length, mortarThickness, masonryHeight, masonryLength, masonryWidth);

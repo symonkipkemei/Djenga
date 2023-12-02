@@ -20,7 +20,7 @@ namespace Djenga.Model
 
         internal DpcStrip( double WallWidth,double WallLength)
         {
-            double offset = 25;
+            double offset = 25; //25mm
             SectionWidth = offset + WallWidth + offset;
             SectionLength =  WallLength;
         }

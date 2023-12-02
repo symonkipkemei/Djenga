@@ -54,7 +54,7 @@ namespace Djenga.View
         {
             // logic runs here on click of the button
 
-            // User parameters
+            // User parameters in mm
 
             double masonryHeight = Convert.ToDouble(tbMasonryHeight.Text);
             double masonryWidth = Convert.ToDouble(tbMasonrywidth.Text);
@@ -69,8 +69,10 @@ namespace Djenga.View
             // close window before selecting walls
             this.Close();
 
+
             // select elements
             Logic logic = new Logic();
+
             IList<Element> walls = logic.SelectMultipleWalls(uidoc, doc);
 
             // Abstract material data from walls and store it on display
