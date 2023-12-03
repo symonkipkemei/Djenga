@@ -7,6 +7,8 @@ using System.Collections.ObjectModel;
 using Autodesk.Revit.DB.Electrical;
 using System.Security.Cryptography.X509Certificates;
 using Autodesk.Revit.DB;
+using System.Diagnostics;
+using System.Windows;
 
 namespace Djenga.Model
 {
@@ -47,19 +49,30 @@ namespace Djenga.Model
 
         public int RatioSand {  get; set; }
         public int RatioCement { get; set; }
+
+
+        //Dimensional properties
         public double Volume {  get; set; }
 
-        internal Mortar(double volume) 
+        internal Mortar( Cement cement, Sand sand, int ratioSand = 3, int ratioCement = 1)
+        {
+         Cement  = cement; Sand = sand; RatioSand = ratioSand; RatioCement = ratioCement;
+        }
+
+        public void GetVolume(double volume)
         {
             Volume = volume;
-            RatioSand = 3;
-            RatioCement = 1;
-            double cementVolume = (RatioSand / (RatioSand + RatioCement)) * Volume;
-            double sandVolume = (RatioSand / (RatioSand + RatioCement)) * Volume;
-            Cement = new Cement(cementVolume);
-            Sand = new Sand(sandVolume);
         }
-        
+
+        public double GetCementVolume()
+        {
+            return (RatioCement/ (RatioCement + RatioSand)) * Volume;
+        }
+
+        public double GetSandVolume()
+        {
+            return (RatioSand / (RatioCement + RatioSand)) * Volume;
+        }
     }
 
 
@@ -71,15 +84,19 @@ namespace Djenga.Model
         public double Width { get; set; }
         public double Volume { get; set; }
 
-
-        // make up properties
         public Mortar Mortar { get; set; }
 
+        internal Joint(double thickness, double length, double width)
+        {
+            Thickness = thickness;
+            Length = length;
+            Width = width;
+    
+        }
 
-        internal Joint()
+        public void GetVolume()
         {
             Volume = Thickness * Length * Width;
-            Mortar = new Mortar(Volume);
         }
      
     }
@@ -93,15 +110,26 @@ namespace Djenga.Model
         public double Height { get; set; }
         public double Length { get; set; }
 
+        public double Volume { get; set; }
 
-        public double Volume()
+        public double Weight { get; set; }
+
+
+        internal Block(double length, double height, double width)
         {
-            return Width * Length * Height;
+            Width = width;
+            Height = height;
+            Length = length;
         }
 
-        public double Weight()
+        public void GetVolume()
         {
-            return (Length * Width * Height) * Density;
+            Volume = Width * Height * Length;
+        }
+
+        public void GetWeight()
+        {
+            Weight = Volume * Density;
         }
 
     }
@@ -114,6 +142,8 @@ namespace Djenga.Model
         public Block ToothBlock { get; set; }
         public Joint VeriticalJoint { get; set; }
         public Joint HorizontalJoint { get; set; }
+
+
 
 
         //Descriptive Properties
@@ -132,52 +162,29 @@ namespace Djenga.Model
 
        
         
-        public Course(double wallWidth, double wallLength, double mortarThickness, double masonryHeight, double masonryLength, double masonryWidth)
+        public Course(Block fullblock, Block toothBlock, Joint veriticalJoint, Joint horizontalJoint, double wallLength, string name)
         {
-            // Intanitiate Material objects
-            VeriticalJoint = new Joint
-            {
-                Thickness = mortarThickness,
-                Width = wallWidth,
-                Length = masonryHeight,
-           
-            };
+            FullBlock = fullblock;ToothBlock = toothBlock; VeriticalJoint = veriticalJoint; 
+            HorizontalJoint = horizontalJoint; WallLength = wallLength; Name = name;
+        }
 
-            HorizontalJoint = new Joint
-            {
-                Thickness = mortarThickness,
-                Width = wallWidth,
-                Length = wallLength,
-            };
-
-            FullBlock = new Block
-            {
-                Width = masonryWidth,
-                Length = masonryLength,
-                Height = masonryHeight
-            };
-
-            ToothBlock = new Block
-            {
-                Width = masonryWidth,
-                Length = masonryLength / 2,
-                Height = masonryHeight
-            };
-
-            // Intanitiate Dimensional properties
-            WallLength = wallLength;
+        public void GetCourseHeight()
+        {
             CourseHeight = FullBlock.Height + HorizontalJoint.Thickness;
-
+        }
+      
+        public void AddCourseElements(bool firstCourse)
+        {
             // instantiate collection properties to enable it store values
             VerticalJointCollection = new ObservableCollection<Joint>();
             HorizontalJointCollection = new ObservableCollection<Joint>();
             FullBlockCollection = new ObservableCollection<Block>();
             ToothBlockCollection = new ObservableCollection<Block>();
-        }
 
-      
-        public void AddCourseElements(bool firstCourse)
-        {
+
+            // intantiate course Height property
+            GetCourseHeight();
+
             HorizontalJointCollection.Add(HorizontalJoint);
             
             // start with corner stone
@@ -199,7 +206,7 @@ namespace Djenga.Model
             double count = 0.0;
             while (count < WallLength)
             {
-
+                
                 //insert block and mortar
                 FullBlockCollection.Add(FullBlock);
                 VerticalJointCollection.Add(VeriticalJoint);
@@ -226,7 +233,10 @@ namespace Djenga.Model
                     count += rem;
                 }
                 // if this length is more than the size of the blocks, keep building.
+                
             }
+            Debug.WriteLine($"Total Full blocks {FullBlockCollection.Count()}");
+            Debug.WriteLine($"Total Tooth blocks {ToothBlockCollection.Count()}");
         }
 
         
@@ -247,9 +257,10 @@ namespace Djenga.Model
         public Course SecondCourse { get; set; }
         public HoopIronStrip HoopIronStrip { get; set; }
         public DpcStrip DpcStrip {  get; set; }
-       
+        public Mortar Mortar { get; set; }
 
-        internal Ukuta(Course firstCourse, Course secondCourse, HoopIronStrip hoopIronStrip,DpcStrip dpcStrip)
+
+        internal Ukuta(Course firstCourse, Course secondCourse, HoopIronStrip hoopIronStrip,DpcStrip dpcStrip, Mortar mortar)
         {
 
             // store objects into abstract wall properties
@@ -257,7 +268,11 @@ namespace Djenga.Model
             SecondCourse = secondCourse;
             HoopIronStrip = hoopIronStrip;
             DpcStrip = dpcStrip;
+            Mortar = mortar;
+        }
 
+        public void AddCourses(double heightOfWall)
+        {
             // Instantiate collections
 
             courseOneCollection = new ObservableCollection<Course>();
@@ -265,14 +280,10 @@ namespace Djenga.Model
             hoopIronCollection = new ObservableCollection<HoopIron>();
             DpcStripCollection = new ObservableCollection<DpcStrip>();
 
-        }
-
-        public void AddCourses(double heightOfWall)
-        {
 
             // instert DPC
-
             DpcStripCollection.Add(DpcStrip);
+
             double count = 0.0;
             while (count < heightOfWall)
             {
@@ -311,80 +322,94 @@ namespace Djenga.Model
 
         public double TotalBlocks()
         {
+            Debug.WriteLine("courses");
+            Debug.WriteLine(courseOneCollection.Count());
+            Debug.WriteLine(courseTwoCollection.Count());
         // Total full blocks
-        double firstCourseFullBlocks = FirstCourse.FullBlockCollection.Count();
-        double secondCourseFullBlocks = SecondCourse.FullBlockCollection.Count();
+        double firstCourseFullBlocks = FirstCourse.FullBlockCollection.Count() * courseOneCollection.Count();
+        double secondCourseFullBlocks = SecondCourse.FullBlockCollection.Count() * courseTwoCollection.Count();
         double totalFullBlocks = firstCourseFullBlocks + secondCourseFullBlocks;
-
+    
         //Total tooth blocks
-        double firstCourseToothBlocks = FirstCourse.ToothBlockCollection.Count();
-        double secondCourseToothBlocks = SecondCourse.FullBlockCollection.Count();
+        double firstCourseToothBlocks = FirstCourse.ToothBlockCollection.Count() * courseOneCollection.Count();
+        double secondCourseToothBlocks = SecondCourse.ToothBlockCollection.Count() * courseTwoCollection.Count();
         double totalToothBlocks = firstCourseToothBlocks + secondCourseToothBlocks;
 
         //Total Blocks
         double totalBlocks = totalFullBlocks + totalToothBlocks;
 
         return totalBlocks;
+
         }
 
-        public double TotalHorizontalJoints()
+        public double TotalHorizontalJointsVolume()
         {
             double firstCourseHorizontalJoints = FirstCourse.HorizontalJointCollection.Count();
             double secondCourseHorizontaJoints = SecondCourse.HorizontalJointCollection.Count();
             double totalHorizontalJoints = firstCourseHorizontalJoints + secondCourseHorizontaJoints;
 
+            FirstCourse.HorizontalJoint.GetVolume();
+            double hjVolume = FirstCourse.HorizontalJoint.Volume;
 
-            return totalHorizontalJoints;
+            double totalhjVolume = hjVolume * totalHorizontalJoints;
+          
+            return totalhjVolume;
 
         }
 
-        public double TotalVerticalJoints()
+        public double TotalVerticalJointsVolume()
         {
             double firstCourseVerticalJoints = FirstCourse.VerticalJointCollection.Count();
             double secondCourseVerticalJoints = SecondCourse.VerticalJointCollection.Count();
+
 
             // total number of joints
 
             double totalVerticalJoints = firstCourseVerticalJoints + secondCourseVerticalJoints;
 
-            return totalVerticalJoints;
+            FirstCourse.VeriticalJoint.GetVolume();
+            double vjVolume = FirstCourse.VeriticalJoint.Volume;
+
+            double totalvjVolume = vjVolume * totalVerticalJoints;
+            return totalvjVolume;
 
         }
 
 
         // vj = vertical joint
         // hj = horizontal joint
-
-
+        
+        
+        public void setMortarVolume()
+        {
+            Mortar.GetVolume(TotalHorizontalJointsVolume() + TotalVerticalJointsVolume());
+        }
+        
         public double TotalCementWeight()
         {
-            // Cement weight
+       
+            setMortarVolume();
+       
+            double cementVolume = Mortar.GetCementVolume();
+            Mortar.Cement.GetVolume(cementVolume);
 
-            double vjCementWeight = FirstCourse.VeriticalJoint.Mortar.Cement.Weight();
-            double hjCementWeight = SecondCourse.HorizontalJoint.Mortar.Cement.Weight();
+            double cementWeight = Mortar.Cement.Weight;
 
-            double totalvjCementWeight = TotalVerticalJoints() * vjCementWeight;
-            double totalhjCementWeight = TotalHorizontalJoints() * hjCementWeight;
-
-            double totalCementWeight = totalvjCementWeight + totalhjCementWeight;
-
-            return totalCementWeight;
+            return cementWeight;
         }
 
 
         public double TotalSandWeight()
         {
             // sand weight
-            double vjSandWeight = FirstCourse.VeriticalJoint.Mortar.Sand.Weight();
-            double hjSandWeight = SecondCourse.HorizontalJoint.Mortar.Sand.Weight();
+            setMortarVolume();
 
-            double totalvjSandWeight = TotalVerticalJoints() * vjSandWeight;
-            double totalhjSandWeight = TotalHorizontalJoints() * hjSandWeight;
+            double sandVolume = Mortar.GetSandVolume();
+            Mortar.Sand.GetVolume(sandVolume);
 
-            double totalSandWeight = totalvjSandWeight + totalhjSandWeight;
+            double sandWeight = Mortar.Cement.Weight;
 
-           
-            return totalSandWeight;
+            return sandWeight;
         }
 
         public double TotalDpcRolls()

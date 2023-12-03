@@ -20,18 +20,20 @@ namespace Djenga.Model
 
         public double Density { get; set; }
 
+        public double Amount { get; set; }
 
-        internal Stone()
+        internal Stone(string name = "Machine Cut Stone",
+                      string unit = "Pieces",
+                      double rate = 50,
+                      double density = 0.001)
         {
-            Unit = "Pieces";
-            Name = "Machine Cut Stone";
-            Rate = 50;
+            Name = name;Unit = unit;Rate = rate;Density = density;
         }
 
 
-        public double Amount()
+        public void GetAmount()
         {
-            return Quantity * Rate;
+            Amount = Quantity * Rate;
         }
 
     }
@@ -44,28 +46,43 @@ namespace Djenga.Model
         public string Unit { get; set; }
         public int Quantity { get; set; }
         public double Rate { get; set; }
+
         public double Density { get; set; }
+        
+        public double Amount { get; set; }
+
+
+        // Dimensional properties
+
+        public double Weight { get; set; }
+
         public double Volume { get; set; }
 
 
-        internal Sand(double volume)
+
+        internal Sand(string name = "River Sand",
+                      string unit = "Grams",
+                      double rate = 300,
+                      double density = 0.001602) //g/mm3 ( 1602kg/m3)
         {
-            Name = "River Sand";
-            Unit = "Volume";
-            Rate = 300;
-            Density = 0.001602; //g/mm3 ( 1602kg/m3)
+            Name = name;Unit = unit;Rate = rate;Density = density;
+        }
+
+        public void GetVolume(double volume)
+        {
             Volume = volume;
         }
-        public double Weight()
+
+
+        public void GetWeight()
         {
-            return Volume * Density;
+            Weight=  Volume * Density;
         }
 
-        public double Amount()
+        public void GetAmount()
         {
-            return Quantity * Rate;
+            Amount = Quantity * Rate;
         }
-
     }
 
 
@@ -77,24 +94,34 @@ namespace Djenga.Model
         public int Quantity { get; set; }
         public double Rate { get; set; }
         public double Density { get; set; }
+
+
+        // Dimensional properties
         public double Volume { get; set; }
+        public double Weight { get; set; }
+
+        public double Amount { get; set; }
 
 
-        internal Cement(double volume)
+        internal Cement(string name = "Bamburi Cement",
+                        string unit = "Bags", 
+                        double rate = 605, 
+                        double density = 0.00144)
         {
-            Name = "Bamburi Cement";
-            Unit = "Bags";
-            Rate = 605;
-            Density = 0.00144; //g/mm3 ( 1440kg/m3)
-            Volume = volume;
+            Name = name; Unit = unit; Rate = rate; Density = density;
+           
         }
 
         
-        public double Weight()
+        public void GetWeight()
         {
-            return Volume * Density;
+            Weight= Volume * Density;
         }
 
+        public void GetVolume(double volume)
+        {
+            Volume = volume;
+        }
         public double NoOfBags(int bagSizeing)
         {
             double aproxBags = (Volume * Density) / bagSizeing;
@@ -102,9 +129,9 @@ namespace Djenga.Model
             return EstimateBags;
         }
 
-        public double Amount()
+        public void GetAmount()
         {
-            return Quantity * Rate;
+            Amount = Quantity * Rate;
         }
     }
 

@@ -67,7 +67,9 @@
       <DependentUpon>UserSelection.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Djenga.addin" />
+  </ItemGroup>
   <ItemGroup>
     <Page Include="View\UserDisplay.xaml">
       <SubType>Designer</SubType>

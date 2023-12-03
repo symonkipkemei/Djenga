@@ -32,13 +32,17 @@
 
         <StackPanel Grid.Row="1" Margin="20" VerticalAlignment="Center" >
             <Label Content="Masonry Length:"  VerticalContentAlignment="Center" FontWeight="Light" BorderBrush="Gray"  FontSize="16" Margin="0,0,0,10"/>
-            <TextBox Name="tbMasonryLength" Height="35" BorderBrush="Gray" BorderThickness="1" Margin="0,0,0,10" TextAlignment="Left" VerticalAlignment="Center" />
+            <TextBox Name="tbMasonryLength" Height="35" BorderBrush="Gray" BorderThickness="1" 
+                     Margin="0,0,0,10" TextAlignment="Left" VerticalAlignment="Center" Text="400"/>
             <Label Content="Masonry Width:"  VerticalContentAlignment="Center" FontWeight="Light" BorderBrush="Gray"  FontSize="16" Margin="0,0,0,10"/>
-            <TextBox Name="tbMasonrywidth" Height="35" BorderBrush="Gray" BorderThickness="1" Margin="0,0,0,10" TextAlignment="Left" VerticalAlignment="Center" />
+            <TextBox Name="tbMasonrywidth" Height="35" BorderBrush="Gray" BorderThickness="1" 
+                     Margin="0,0,0,10" TextAlignment="Left" VerticalAlignment="Center" Text="200"/>
             <Label Content="Masonry Height:"  VerticalContentAlignment="Center" FontWeight="Light" BorderBrush="Gray"  FontSize="16" Margin="0,0,0,10"/>
-            <TextBox Name="tbMasonryHeight" Height="35" BorderBrush="Gray" BorderThickness="1" Margin="0,0,0,10" TextAlignment="Left" VerticalAlignment="Center" />
+            <TextBox Name="tbMasonryHeight" Height="35" BorderBrush="Gray" BorderThickness="1" 
+                     Margin="0,0,0,10" TextAlignment="Left" VerticalAlignment="Center" Text="200"/>
             <Label Content="Mortar Thickness:"  VerticalContentAlignment="Center" FontWeight="Light" BorderBrush="Gray"  FontSize="16" Margin="0,0,0,10"/>
-            <TextBox Name="tbMortarThickness" Height="35" BorderBrush="Gray" BorderThickness="1" Margin="0,0,0,10" TextAlignment="Left" VerticalAlignment="Center" />
+            <TextBox Name="tbMortarThickness" Height="35" BorderBrush="Gray" BorderThickness="1" 
+                     Margin="0,0,0,10" TextAlignment="Left" VerticalAlignment="Center" Text="30"/>
 
             <Button Name="btnKabiroWall" Content=" Djenga" FontSize="16" FontWeight="ExtraLight" HorizontalContentAlignment="Center" 
         VerticalContentAlignment="Center" Height=" 35"  Click="Click_btnDjenga" Grid.Row="1" Margin="0,0,0,10"  />

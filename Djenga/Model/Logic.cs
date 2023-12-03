@@ -9,6 +9,8 @@ using Autodesk.Revit.DB;
 using System.Windows.Controls;
 using System.Collections.ObjectModel;
 using Autodesk.Revit.DB.Structure;
+using System.Diagnostics;
+using System.Windows;
 
 namespace Djenga.Model
 {
@@ -53,46 +55,62 @@ namespace Djenga.Model
 
 
                 //converted to mm
-
                 length = UnitsConversion.FootToMm(length);
                 height = UnitsConversion.FootToMm(height);
                 width = UnitsConversion.FootToMm(width);
 
                 
+                Joint veriticalJoint = new Joint(mortarThickness,height,width);
+                Joint horizontalJoint = new Joint(mortarThickness,length,width);
+
+                veriticalJoint.GetVolume();
+                horizontalJoint.GetVolume();
+
+                Block fullBlock = new Block(masonryLength,masonryHeight,masonryWidth);
+                Block toothBlock = new Block(masonryLength/2, masonryHeight, masonryWidth);
 
 
-                // Intantiate ingredients for creating wall courses
-                Course firstCourse = new Course(width, length, mortarThickness, masonryHeight, masonryLength, masonryWidth);
-                Course secondCourse = new Course(width, length, mortarThickness, masonryHeight, masonryLength, masonryWidth);
-                HoopIronStrip hoopiron = new HoopIronStrip(length);
-                DpcStrip dpcStrip = new DpcStrip(width, length);
+                // Intantiate ingredients for creating firs and alternate course
+                Course firstCourse = new Course(fullBlock,toothBlock,veriticalJoint,horizontalJoint,length,"First Course");
+                Course secondCourse = new Course(fullBlock, toothBlock, veriticalJoint, horizontalJoint, length, "Alternate Course");
 
                 // Create  courses by adding individual elements i.e blocks and mortar
                 firstCourse.AddCourseElements(true);
                 secondCourse.AddCourseElements(false);
 
+
+                HoopIronStrip hoopIron = new HoopIronStrip(length);
+                DpcStrip dpcStrip = new DpcStrip(width, length);
+
+                Cement cement = new Cement();
+                Sand sand = new Sand();
+                Mortar mortar = new Mortar(cement, sand);
+
+
+
                 // Intantiate ingredients for creating an abstract wall
-                Ukuta ukuta = new Ukuta(firstCourse, secondCourse, hoopiron, dpcStrip);
+                Ukuta ukuta = new Ukuta(firstCourse, secondCourse, hoopIron, dpcStrip,mortar);
                 ukuta.AddCourses(height);
+
 
                 // stones
                 Items.Add(new Display
                 {
-                    Description = ukuta.FirstCourse.FullBlock.Name,
-                    Unit = ukuta.FirstCourse.FullBlock.Unit,
+                    Description = fullBlock.Name,
+                    Unit = fullBlock.Unit,
                     Quantity = ukuta.TotalBlocks(),
-                    Rate = ukuta.FirstCourse.FullBlock.Rate,
-                    Amount = ukuta.FirstCourse.FullBlock.Amount()
+                    Rate = fullBlock.Rate,
+                    Amount = fullBlock.Amount
                 });
 
                 // cement
                 Items.Add(new Display
                 {
-                    Description = ukuta.FirstCourse.HorizontalJoint.Mortar.Cement.Name,
-                    Unit = ukuta.FirstCourse.HorizontalJoint.Mortar.Cement.Unit,
+                    Description = cement.Name,
+                    Unit = cement.Unit,
                     Quantity = ukuta.TotalCementWeight(),
-                    Rate = ukuta.FirstCourse.HorizontalJoint.Mortar.Cement.Rate,
-                    Amount = ukuta.FirstCourse.HorizontalJoint.Mortar.Cement.Amount(),
+                    Rate = cement.Rate,
+                    Amount = cement.Amount,
 
                 });
 
@@ -100,11 +118,11 @@ namespace Djenga.Model
                 // sand
                 Items.Add(new Display
                 {
-                    Description = ukuta.FirstCourse.HorizontalJoint.Mortar.Sand.Name,
-                    Unit = ukuta.FirstCourse.HorizontalJoint.Mortar.Sand.Unit,
+                    Description = sand.Name,
+                    Unit = sand.Unit,
                     Quantity = ukuta.TotalSandWeight(),
-                    Rate = ukuta.FirstCourse.HorizontalJoint.Mortar.Sand.Rate,
-                    Amount = ukuta.FirstCourse.HorizontalJoint.Mortar.Sand.Amount(),
+                    Rate = sand.Rate,
+                    Amount = sand.Amount,
 
                 });
 
@@ -113,11 +131,11 @@ namespace Djenga.Model
 
                 Items.Add(new Display
                 {
-                    Description = ukuta.HoopIronStrip.Name,
-                    Unit = ukuta.HoopIronStrip.Unit,
+                    Description = hoopIron.Name,
+                    Unit = hoopIron.Unit,
                     Quantity = ukuta.TotalHoopIronRolls(),
-                    Rate = ukuta.HoopIronStrip.Rate,
-                    Amount = ukuta.HoopIronStrip.Amount(),
+                    Rate = hoopIron.Rate,
+                    Amount = hoopIron.Amount(),
 
                 });
 
@@ -126,11 +144,11 @@ namespace Djenga.Model
                 // DPC
                 Items.Add(new Display
                 {
-                    Description = ukuta.DpcStrip.Name,
-                    Unit = ukuta.DpcStrip.Unit,
+                    Description = dpcStrip.Name,
+                    Unit = dpcStrip.Unit,
                     Quantity = ukuta.TotalDpcRolls(),
-                    Rate = ukuta.DpcStrip.Rate,
-                    Amount = ukuta.DpcStrip.Amount(),
+                    Rate = dpcStrip.Rate,
+                    Amount = dpcStrip.Amount(),
 
                 });
             }
