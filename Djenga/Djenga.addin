@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<RevitAddIns>
+	<AddIn Type="Command">
+		<Name>Djenga</Name>
+		<FullClassName>Djenga.Main</FullClassName>
+		<Text>Djenga</Text>
+		<Description>Jenga na Data</Description>
+		<VisibilityMode>AlwaysVisible</VisibilityMode>
+		<Assembly>C:\Users\User\Documents\pysklo\Djenga\Djenga\bin\Debug\Djenga.dll</Assembly>
+		<AddInId>5CB55285-FA69-4787-AABA-1996B92B7095</AddInId>
+		<VendorId>Symon Kipkemei</VendorId>
+		<VendorDescription>symon@Djenga.io</VendorDescription>
+	</AddIn>
+</RevitAddIns>
+
+
+
