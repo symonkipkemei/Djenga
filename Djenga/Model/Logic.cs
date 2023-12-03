@@ -68,14 +68,16 @@ namespace Djenga.Model
 
                 Block fullBlock = new Block(masonryLength,masonryHeight,masonryWidth);
                 Block toothBlock = new Block(masonryLength/2, masonryHeight, masonryWidth);
-
+                Block stackBlock = new Block(masonryLength * (2/3), masonryHeight, masonryWidth); // avargely 2/3rds of the normal block
 
                 // Intantiate ingredients for creating firs and alternate course
-                Course firstCourse = new Course(fullBlock,toothBlock,veriticalJoint,horizontalJoint,length,"First Course");
-                Course secondCourse = new Course(fullBlock, toothBlock, veriticalJoint, horizontalJoint, length, "Alternate Course");
+                Course firstCourse = new Course(fullBlock,toothBlock,stackBlock,veriticalJoint,horizontalJoint,length,"First Course");
+                Course secondCourse = new Course(fullBlock, toothBlock, stackBlock, veriticalJoint, horizontalJoint, length, "Alternate Course");
 
                 // Create  courses by adding individual elements i.e blocks and mortar
+                Debug.WriteLine($"First Course");
                 firstCourse.AddCourseElements(true);
+                Debug.WriteLine($"Second Course");
                 secondCourse.AddCourseElements(false);
 
 
@@ -85,7 +87,6 @@ namespace Djenga.Model
                 Cement cement = new Cement();
                 Sand sand = new Sand();
                 Mortar mortar = new Mortar(cement, sand);
-
 
 
                 // Intantiate ingredients for creating an abstract wall

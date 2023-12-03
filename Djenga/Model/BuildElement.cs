@@ -140,6 +140,7 @@ namespace Djenga.Model
         // Material Properties/Objects
         public Block FullBlock { get; set; }
         public Block ToothBlock { get; set; }
+        public Block StackBlock { get; set; }
         public Joint VeriticalJoint { get; set; }
         public Joint HorizontalJoint { get; set; }
 
@@ -156,15 +157,19 @@ namespace Djenga.Model
         // Collection properties
         public ObservableCollection<Block> FullBlockCollection { get; set; }
         public ObservableCollection<Block> ToothBlockCollection { get; set; }
+
+        public ObservableCollection<Block> StackBlockCollection { get; set; }
+
         public ObservableCollection<Joint> VerticalJointCollection { get; set; }
         public ObservableCollection<Joint> HorizontalJointCollection { get; set; }
-
-
-       
         
-        public Course(Block fullblock, Block toothBlock, Joint veriticalJoint, Joint horizontalJoint, double wallLength, string name)
+
+
+
+
+        public Course(Block fullblock, Block toothBlock, Block stackBlock, Joint veriticalJoint, Joint horizontalJoint, double wallLength, string name)
         {
-            FullBlock = fullblock;ToothBlock = toothBlock; VeriticalJoint = veriticalJoint; 
+            FullBlock = fullblock;ToothBlock = toothBlock; StackBlock = stackBlock; VeriticalJoint = veriticalJoint; 
             HorizontalJoint = horizontalJoint; WallLength = wallLength; Name = name;
         }
 
@@ -180,7 +185,7 @@ namespace Djenga.Model
             HorizontalJointCollection = new ObservableCollection<Joint>();
             FullBlockCollection = new ObservableCollection<Block>();
             ToothBlockCollection = new ObservableCollection<Block>();
-
+            StackBlockCollection = new ObservableCollection<Block>();
 
             // intantiate course Height property
             GetCourseHeight();
@@ -191,14 +196,24 @@ namespace Djenga.Model
             if (firstCourse)
             {
                 // add full stone first
-                FullBlockCollection.Add(FullBlock);
+                FullBlockCollection.Add(FullBlock); //at the start
+                VerticalJointCollection.Add(VeriticalJoint); // after first course
+                FullBlockCollection.Add(FullBlock); // at the end
+
+                WallLength -= FullBlock.Length;
+                WallLength -= VeriticalJoint.Thickness;
                 WallLength -= FullBlock.Length;
             }
 
             else
             {
                 // add tooth stone
-                ToothBlockCollection.Add(ToothBlock);
+                ToothBlockCollection.Add(ToothBlock); //at the start
+                VerticalJointCollection.Add(VeriticalJoint); // after first course
+                ToothBlockCollection.Add(ToothBlock); //at the end
+
+                WallLength -= ToothBlock.Length;
+                WallLength -=VeriticalJoint.Thickness;
                 WallLength -= ToothBlock.Length;
             }
 
@@ -206,40 +221,43 @@ namespace Djenga.Model
             double count = 0.0;
             while (count < WallLength)
             {
-                
-                //insert block and mortar
-                FullBlockCollection.Add(FullBlock);
-                VerticalJointCollection.Add(VeriticalJoint);
-
-
-                // adjust new dimensions of built masonry
-                count += FullBlock.Length;
-                count += VeriticalJoint.Thickness;
-
+              
                 // est the remaining length
                 double rem = WallLength - count;
+                Debug.WriteLine($"Remaining length {rem}");
 
-                if (rem < FullBlock.Length && rem > ToothBlock.Length)
+                // if length is less than half of a toothblock length
+                if (rem < (ToothBlock.Length/2))
                 {
-                    //use a bigger block
+                    // add mortart size
+                    VerticalJointCollection.Add(VeriticalJoint);
+                    count += rem;
+                }
+
+                else if ( rem >= (ToothBlock.Length / 2) &&  rem < (FullBlock.Length + VeriticalJoint.Thickness))
+                {
+                    // add stack block
+                    StackBlockCollection.Add(StackBlock);
+                    count += rem;
+                }
+
+                else
+                {
+                    //insert block and mortar
                     FullBlockCollection.Add(FullBlock);
-                    count += rem;
-                }
+                    VerticalJointCollection.Add(VeriticalJoint);
 
-                else if (rem < ToothBlock.Length)
-                {
-                    //use  a tooth block
-                    ToothBlockCollection.Add(FullBlock);
-                    count += rem;
+
+                    // adjust new dimensions of built masonry
+                    count += FullBlock.Length;
+                    count += VeriticalJoint.Thickness;
+
                 }
-                // if this length is more than the size of the blocks, keep building.
-                
             }
             Debug.WriteLine($"Total Full blocks {FullBlockCollection.Count()}");
             Debug.WriteLine($"Total Tooth blocks {ToothBlockCollection.Count()}");
+            Debug.WriteLine($"Total Stack blocks {StackBlockCollection.Count()}");
         }
-
-        
     }
 
 
@@ -322,9 +340,10 @@ namespace Djenga.Model
 
         public double TotalBlocks()
         {
-            Debug.WriteLine("courses");
-            Debug.WriteLine(courseOneCollection.Count());
-            Debug.WriteLine(courseTwoCollection.Count());
+        Debug.WriteLine("No of courses");
+        Debug.WriteLine($"No of first course: {courseOneCollection.Count()}");
+        Debug.WriteLine($"No of alternate course: {courseTwoCollection.Count()}");
+
         // Total full blocks
         double firstCourseFullBlocks = FirstCourse.FullBlockCollection.Count() * courseOneCollection.Count();
         double secondCourseFullBlocks = SecondCourse.FullBlockCollection.Count() * courseTwoCollection.Count();
@@ -335,8 +354,14 @@ namespace Djenga.Model
         double secondCourseToothBlocks = SecondCourse.ToothBlockCollection.Count() * courseTwoCollection.Count();
         double totalToothBlocks = firstCourseToothBlocks + secondCourseToothBlocks;
 
+
+        // stack blocks
+        double firstCourseStackBlocks = FirstCourse.StackBlockCollection.Count() * courseOneCollection.Count();
+        double secondCourseStackBlocks = SecondCourse.StackBlockCollection.Count() * courseTwoCollection.Count();
+        double totalStackBlocks = firstCourseStackBlocks + secondCourseStackBlocks;
+
         //Total Blocks
-        double totalBlocks = totalFullBlocks + totalToothBlocks;
+        double totalBlocks = totalFullBlocks + totalToothBlocks + totalStackBlocks;
 
         return totalBlocks;
 
