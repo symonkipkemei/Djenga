@@ -54,8 +54,6 @@ namespace Djenga.Model
 
         // Dimensional properties
 
-        public double Weight { get; set; }
-
         public double Volume { get; set; }
 
 
@@ -68,15 +66,10 @@ namespace Djenga.Model
             Name = name;Unit = unit;Rate = rate;Density = density;
         }
 
-        public void GetVolume(double volume)
+        public double GetWeight()
         {
-            Volume = volume;
-        }
-
-
-        public void GetWeight()
-        {
-            Weight=  Volume * Density;
+            double Weight=  Volume * Density;
+            return Weight;
         }
 
         public void GetAmount()
@@ -98,7 +91,6 @@ namespace Djenga.Model
 
         // Dimensional properties
         public double Volume { get; set; }
-        public double Weight { get; set; }
 
         public double Amount { get; set; }
 
@@ -113,15 +105,13 @@ namespace Djenga.Model
         }
 
         
-        public void GetWeight()
+        public double GetWeight()
         {
-            Weight= Volume * Density;
+            double Weight= Volume * Density;
+            return Weight;
         }
 
-        public void GetVolume(double volume)
-        {
-            Volume = volume;
-        }
+        
         public double NoOfBags(int bagSizeing)
         {
             double aproxBags = (Volume * Density) / bagSizeing;

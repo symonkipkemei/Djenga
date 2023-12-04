@@ -9,6 +9,7 @@ using System.Security.Cryptography.X509Certificates;
 using Autodesk.Revit.DB;
 using System.Diagnostics;
 using System.Windows;
+using Autodesk.Revit.UI;
 
 namespace Djenga.Model
 {
@@ -66,12 +67,18 @@ namespace Djenga.Model
 
         public double GetCementVolume()
         {
-            return (RatioCement/ (RatioCement + RatioSand)) * Volume;
+            double totalRatio = RatioCement + RatioSand;
+            double ratio = (RatioCement / totalRatio);
+            double cementVolume = ratio * Volume;
+            return cementVolume;
         }
 
         public double GetSandVolume()
         {
-            return (RatioSand / (RatioCement + RatioSand)) * Volume;
+            double totalRatio = RatioCement + RatioSand;
+            double ratio = (RatioSand / totalRatio);
+            double sandVolume = ratio * Volume;
+            return sandVolume;
         }
     }
 
@@ -323,7 +330,7 @@ namespace Djenga.Model
                         count += rem;
                     }
 
-                    else // this is the alternate course
+                    else // this is a course whose height is less than courseheight
                     {
                         courseOneCollection.Add(FirstCourse);
                         count += rem;
@@ -428,7 +435,8 @@ namespace Djenga.Model
         
         public void setMortarVolume()
         {
-            Mortar.GetVolume(TotalHorizontalJointsVolume() + TotalVerticalJointsVolume());
+            double totalVolume = TotalHorizontalJointsVolume() + TotalVerticalJointsVolume();
+            Mortar.Volume = totalVolume;
         }
         
         public double TotalCementWeight()
@@ -437,9 +445,9 @@ namespace Djenga.Model
             setMortarVolume();
        
             double cementVolume = Mortar.GetCementVolume();
-            Mortar.Cement.GetVolume(cementVolume);
+            Mortar.Cement.Volume = cementVolume;
+            double cementWeight = Mortar.Cement.GetWeight();
 
-            double cementWeight = Mortar.Cement.Weight;
 
             return cementWeight;
         }
@@ -451,9 +459,8 @@ namespace Djenga.Model
             setMortarVolume();
 
             double sandVolume = Mortar.GetSandVolume();
-            Mortar.Sand.GetVolume(sandVolume);
-
-            double sandWeight = Mortar.Cement.Weight;
+            Mortar.Sand.Volume = sandVolume;
+            double sandWeight = Mortar.Sand.GetWeight();
 
             return sandWeight;
         }
