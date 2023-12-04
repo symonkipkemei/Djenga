@@ -55,9 +55,9 @@ namespace Djenga.Model
 
 
                 //converted to mm
-                length = UnitsConversion.FootToMm(length);
-                height = UnitsConversion.FootToMm(height);
-                width = UnitsConversion.FootToMm(width);
+                length = UnitsConversion.FootToMmInt(length);
+                height = UnitsConversion.FootToMmInt(height);
+                width = UnitsConversion.FootToMmInt(width);
 
                 
                 Joint veriticalJoint = new Joint(mortarThickness,height,width);

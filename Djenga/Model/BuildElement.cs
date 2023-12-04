@@ -302,36 +302,57 @@ namespace Djenga.Model
             // instert DPC
             DpcStripCollection.Add(DpcStrip);
 
+            int counter = 0;
             double count = 0.0;
             while (count < heightOfWall)
             {
-                //Insert the first course
-                courseOneCollection.Add(FirstCourse);
-                count += FirstCourse.CourseHeight;
-
+                // add counter to determine between first and alternate course
+                counter++;
                 double rem = heightOfWall - count;
-
-                if (rem < FirstCourse.CourseHeight)
+                Debug.WriteLine($"Remaining course height: {rem}");
+                if (counter% 2 != 0 ) // this is a first course
                 {
-                    courseTwoCollection.Add(SecondCourse);
-                    hoopIronCollection.Add(HoopIronStrip);
-                    count += rem;
-                }
-                   
-                else 
-                {
-                    courseTwoCollection.Add(SecondCourse);
-                    hoopIronCollection.Add(HoopIronStrip);
+                    if(rem >= FirstCourse.CourseHeight)
+                    {
+                        courseOneCollection.Add(FirstCourse);
+                        count += FirstCourse.CourseHeight;
+                    }
 
-                    count += FirstCourse.CourseHeight;
+                    else if (rem == 0)
+                    {
+                        count += rem;
+                    }
 
-                    if (rem < SecondCourse.CourseHeight)
+                    else // this is the alternate course
                     {
                         courseOneCollection.Add(FirstCourse);
                         count += rem;
+                        // The count stops at this point
                     }
-               
                 }
+
+                else // This is the second course
+                {
+                    if (rem >= SecondCourse.CourseHeight)
+                    {
+                        courseTwoCollection.Add(SecondCourse);
+                        count += SecondCourse.CourseHeight;
+                    }
+
+                    else if (rem == 0)
+                    {
+                        count += rem;
+                    }
+
+
+                    else // this is the alternate course
+                    {
+                        courseTwoCollection.Add(SecondCourse);
+                        count += rem;
+                        // The count stops at this point
+                    }
+                }
+
             }
                 // if this length is more than the size of the blocks, keep building.
         }
