@@ -68,5 +68,9 @@ namespace Djenga.Model
             return volume * _cubicFootToCubicMeter;
         }
 
+        public static double gramsToKg(double weight)
+        {
+            return (weight / 1000);
+        }
     }
 }

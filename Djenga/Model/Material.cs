@@ -59,7 +59,7 @@ namespace Djenga.Model
 
 
         internal Sand(string name = "River Sand",
-                      string unit = "Grams",
+                      string unit = "Kilograms (kg)",
                       double rate = 300,
                       double density = 0.001602) //g/mm3 ( 1602kg/m3)
         {
@@ -72,9 +72,9 @@ namespace Djenga.Model
             return Weight;
         }
 
-        public void GetAmount()
+        public double GetAmount()
         {
-            Amount = Quantity * Rate;
+            return Quantity * Rate;
         }
     }
 
@@ -96,7 +96,7 @@ namespace Djenga.Model
 
 
         internal Cement(string name = "Bamburi Cement",
-                        string unit = "Bags", 
+                        string unit = "Kilograms (Kg)", 
                         double rate = 605, 
                         double density = 0.00144)
         {

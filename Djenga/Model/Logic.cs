@@ -134,7 +134,7 @@ namespace Djenga.Model
             {
                 Description = dispCement.Name,
                 Unit = dispCement.Unit,
-                Quantity = quantityCement,
+                Quantity = UnitsConversion.gramsToKg(quantityCement),
                 Rate = dispCement.Rate,
                 Amount = dispCement.Amount,
 
@@ -146,7 +146,7 @@ namespace Djenga.Model
             {
                 Description = dispSand.Name,
                 Unit = dispSand.Unit,
-                Quantity = quantitySand,
+                Quantity = UnitsConversion.gramsToKg(quantitySand),
                 Rate = dispSand.Rate,
                 Amount = dispSand.Amount,
 
