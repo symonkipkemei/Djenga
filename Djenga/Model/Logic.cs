@@ -19,6 +19,15 @@ namespace Djenga.Model
 
         public ObservableCollection<Display> Items { get; set; }
 
+        // displayMaterials
+        private Cement dispCement = new Cement();
+        private Sand dispSand = new Sand();
+        private Stone dispStone = new Stone();
+        private HoopIron dispHoopIron = new HoopIron();
+        private DampProofCourse dispDPC = new DampProofCourse();
+
+
+
         public IList<Element> SelectMultipleWalls(UIDocument uidoc, Document doc)
         {
             IList<Element> walls = new List<Element>();
@@ -45,6 +54,14 @@ namespace Djenga.Model
         {
             Items = new ObservableCollection<Display>();
 
+            //sum quantities
+
+            double quantityCement = 0;
+            double quantitySand = 0;
+            double quantityBlocks = 0;
+            double quantityHoopIron = 0;
+            double quantityDpc = 0;
+
             // For every wall
             foreach (Element wall in walls)
             {
@@ -59,19 +76,19 @@ namespace Djenga.Model
                 height = UnitsConversion.FootToMmInt(height);
                 width = UnitsConversion.FootToMmInt(width);
 
-                
-                Joint veriticalJoint = new Joint(mortarThickness,height,width);
-                Joint horizontalJoint = new Joint(mortarThickness,length,width);
+
+                Joint veriticalJoint = new Joint(mortarThickness, height, width);
+                Joint horizontalJoint = new Joint(mortarThickness, length, width);
 
                 veriticalJoint.GetVolume();
                 horizontalJoint.GetVolume();
 
-                Block fullBlock = new Block(masonryLength,masonryHeight,masonryWidth);
-                Block toothBlock = new Block(masonryLength/2, masonryHeight, masonryWidth);
-                Block stackBlock = new Block(masonryLength * (2/3), masonryHeight, masonryWidth); // avargely 2/3rds of the normal block
+                Block fullBlock = new Block(masonryLength, masonryHeight, masonryWidth);
+                Block toothBlock = new Block(masonryLength / 2, masonryHeight, masonryWidth);
+                Block stackBlock = new Block(masonryLength * (2 / 3), masonryHeight, masonryWidth); // avargely 2/3rds of the normal block
 
                 // Intantiate ingredients for creating firs and alternate course
-                Course firstCourse = new Course(fullBlock,toothBlock,stackBlock,veriticalJoint,horizontalJoint,length,"First Course");
+                Course firstCourse = new Course(fullBlock, toothBlock, stackBlock, veriticalJoint, horizontalJoint, length, "First Course");
                 Course secondCourse = new Course(fullBlock, toothBlock, stackBlock, veriticalJoint, horizontalJoint, length, "Alternate Course");
 
                 // Create  courses by adding individual elements i.e blocks and mortar
@@ -90,69 +107,77 @@ namespace Djenga.Model
 
 
                 // Intantiate ingredients for creating an abstract wall
-                Ukuta ukuta = new Ukuta(firstCourse, secondCourse, hoopIron, dpcStrip,mortar);
+                Ukuta ukuta = new Ukuta(firstCourse, secondCourse, hoopIron, dpcStrip, mortar);
                 ukuta.AddCourses(height);
 
-
-                // stones
-                Items.Add(new Display
-                {
-                    Description = fullBlock.Name,
-                    Unit = fullBlock.Unit,
-                    Quantity = ukuta.TotalBlocks(),
-                    Rate = fullBlock.Rate,
-                    Amount = fullBlock.Amount
-                });
-
-                // cement
-                Items.Add(new Display
-                {
-                    Description = cement.Name,
-                    Unit = cement.Unit,
-                    Quantity = ukuta.TotalCementWeight(),
-                    Rate = cement.Rate,
-                    Amount = cement.Amount,
-
-                });
+                quantityBlocks += ukuta.TotalBlocks();
+                quantityCement += ukuta.TotalCementWeight();
+                quantitySand += ukuta.TotalSandWeight();
+                quantityDpc += ukuta.TotalDpcRolls();
+                quantityHoopIron += ukuta.TotalHoopIronRolls();
 
 
-                // sand
-                Items.Add(new Display
-                {
-                    Description = sand.Name,
-                    Unit = sand.Unit,
-                    Quantity = ukuta.TotalSandWeight(),
-                    Rate = sand.Rate,
-                    Amount = sand.Amount,
-
-                });
-
-
-                // Hoop Iron
-
-                Items.Add(new Display
-                {
-                    Description = hoopIron.Name,
-                    Unit = hoopIron.Unit,
-                    Quantity = ukuta.TotalHoopIronRolls(),
-                    Rate = hoopIron.Rate,
-                    Amount = hoopIron.Amount(),
-
-                });
-
-
-
-                // DPC
-                Items.Add(new Display
-                {
-                    Description = dpcStrip.Name,
-                    Unit = dpcStrip.Unit,
-                    Quantity = ukuta.TotalDpcRolls(),
-                    Rate = dpcStrip.Rate,
-                    Amount = dpcStrip.Amount(),
-
-                });
             }
+
+            // stones
+            Items.Add(new Display
+            {
+                Description = dispStone.Name,
+                Unit = dispStone.Unit,
+                Quantity = quantityBlocks,
+                Rate = dispStone.Rate,
+                Amount = dispStone.Amount
+            });
+
+            // cement
+            Items.Add(new Display
+            {
+                Description = dispCement.Name,
+                Unit = dispCement.Unit,
+                Quantity = quantityCement,
+                Rate = dispCement.Rate,
+                Amount = dispCement.Amount,
+
+            });
+
+
+            // sand
+            Items.Add(new Display
+            {
+                Description = dispSand.Name,
+                Unit = dispSand.Unit,
+                Quantity = quantitySand,
+                Rate = dispSand.Rate,
+                Amount = dispSand.Amount,
+
+            });
+
+
+            // Hoop Iron
+
+            Items.Add(new Display
+            {
+                Description = dispHoopIron.Name,
+                Unit = dispHoopIron.Unit,
+                Quantity = quantityHoopIron,
+                Rate = dispHoopIron.Rate,
+                Amount = dispHoopIron.Amount(),
+
+            });
+
+
+
+            // DPC
+            Items.Add(new Display
+            {
+                Description = dispDPC.Name,
+                Unit = dispDPC.Unit,
+                Quantity = quantityDpc,
+                Rate = dispDPC.Rate,
+                Amount = dispDPC.Amount(),
+
+            });
+            
 
         }
     }

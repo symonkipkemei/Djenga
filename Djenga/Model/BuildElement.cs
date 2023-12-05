@@ -55,7 +55,7 @@ namespace Djenga.Model
         //Dimensional properties
         public double Volume {  get; set; }
 
-        internal Mortar( Cement cement, Sand sand, int ratioSand = 3, int ratioCement = 1)
+        internal Mortar( Cement cement, Sand sand, int ratioSand = 4, int ratioCement = 1)
         {
          Cement  = cement; Sand = sand; RatioSand = ratioSand; RatioCement = ratioCement;
         }
