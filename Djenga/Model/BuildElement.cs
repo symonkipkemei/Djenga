@@ -343,6 +343,7 @@ namespace Djenga.Model
                     if (rem >= SecondCourse.CourseHeight)
                     {
                         courseTwoCollection.Add(SecondCourse);
+                        hoopIronCollection.Add(HoopIronStrip);
                         count += SecondCourse.CourseHeight;
                     }
 
@@ -355,6 +356,7 @@ namespace Djenga.Model
                     else // this is the alternate course
                     {
                         courseTwoCollection.Add(SecondCourse);
+                        hoopIronCollection.Add(HoopIronStrip);
                         count += rem;
                         // The count stops at this point
                     }
@@ -470,19 +472,35 @@ namespace Djenga.Model
             double totalDpcStripLength = DpcStrip.SectionLength * DpcStripCollection.Count();
             double NoOfSectionsInOneRow = (int)(DpcStrip.Width / DpcStrip.SectionWidth);
             double TotalLengthofdpcPerRow = NoOfSectionsInOneRow * DpcStrip.Length;
+            double NoOfRolls = (totalDpcStripLength / TotalLengthofdpcPerRow);
 
-            int NoOfRolls =Convert.ToInt32(totalDpcStripLength / TotalLengthofdpcPerRow);
 
-            return NoOfRolls;
+            Debug.Write($"dpc Strip length {HoopIronStrip.StripLength}");
+            Debug.Write($"dpc strip length collection {hoopIronCollection.Count()}");
+            Debug.Write($"dpc Total length {TotalLengthofdpcPerRow}");
+            Debug.Write($"dpc no of rolls {NoOfRolls}");
+
+            if (NoOfRolls > 0 && NoOfRolls < 1) { NoOfRolls = 1; }
+
+            return Convert.ToInt32(NoOfRolls);
 
         }
 
         public double TotalHoopIronRolls()
         {
             double totalHoopIronStripLength = HoopIronStrip.StripLength * hoopIronCollection.Count();
-            int NoOfRolls = Convert.ToInt32(totalHoopIronStripLength / HoopIronStrip.Length);
-            
-            return NoOfRolls;
+            Debug.Write($"Strip length {HoopIronStrip.StripLength}");
+            Debug.Write($"strip length collection {hoopIronCollection.Count()}");
+            Debug.Write($"Total hoop iron length {totalHoopIronStripLength}");
+            double NoOfRolls = (totalHoopIronStripLength / HoopIronStrip.Length);
+            Debug.Write($"DEFAULT HOOP IRON LENGTH {HoopIronStrip.Length}");
+            Debug.Write($"hoopiron no of rolls {NoOfRolls}");
+
+            if ( NoOfRolls > 0 && NoOfRolls < 1) { NoOfRolls = 1; }
+
+
+
+            return Convert.ToInt32(NoOfRolls);
         }
 
 
